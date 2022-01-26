@@ -1,0 +1,39 @@
+body{
+    background-color: black;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h1, h2{
+    color: white;
+}
+
+table{
+    border-collapse: collapse;
+}
+
+td{
+    border: 1px solid black;
+    height: 2em;
+    width: 2em;
+    text-align: center;
+}
+
+.modal{
+    /* background-color: rgba(51, 173, 51, 0.829); */
+    border-radius: 10px;
+    text-align: center;
+    height: 30%;
+    width: 30%;
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.sky{
+    background-color: lightblue;
+}
+.ground{
+    background-color: brown;
+}
