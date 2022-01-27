@@ -1,11 +1,10 @@
 'use strict';
 
-
 function createCell(gameObject = null) {
     return {
         type: SKY,
         gameObject: gameObject
-    }
+    };
 }
 
 function getElCell(pos) {

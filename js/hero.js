@@ -30,6 +30,10 @@ function onKeyDown(event) {
         case ' ':
             shoot();
             break;
+        case 'n':
+        case 'N':
+            shoot(true);
+            break;    
     }
     return nextPosition;
 }
@@ -52,35 +56,25 @@ function moveHero(ev) {
     //Model
     gBoard[gHero.pos.i][gHero.pos.j].gameObject = HERO;
     //DOM
-    updateCell(gHero.pos, HERO)
+    updateCell(gHero.pos, HERO);
 }
 
-
-function updateCell(pos, gameObject = null) {
-    gBoard[pos.i][pos.j].gameObject = gameObject;
-    var elCell = getElCell(pos);
-    elCell.innerHTML = gameObject || '';
-}
-
-
-function shoot() {
+function shoot(isMeta) {
     if (gHero.isShoot) return;
-    var pos = { i: gHero.pos.i - 1, j: gHero.pos.j }
+    var pos = { i: gHero.pos.i - 1, j: gHero.pos.j };
     gHero.isShoot = true;
-    blinkLaser(pos)
+    blinkLaser(pos, isMeta);
 }
 
-function blinkLaser(pos) {
-    // console.log('-------');
+function blinkLaser(pos, isMeta) {
     if (pos.i < 0) return gHero.isShoot = false;
 
     if (gBoard[pos.i][pos.j].gameObject) {
         gHero.isShoot = false;
-        handleAlienHit(pos)
-        return
+        handleAlienHit(pos, isMeta);
+        return;
     }
 
-    // console.log('-------');
     //Model
     gBoard[pos.i][pos.j].gameObject = LASER;
     //Dom
@@ -91,7 +85,6 @@ function blinkLaser(pos) {
         //Dom
         updateCell(pos);
         pos.i--
-        blinkLaser(pos);
+        blinkLaser(pos, isMeta);
     }, LASER_SPEED);
-
 }

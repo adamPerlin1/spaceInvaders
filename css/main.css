@@ -7,6 +7,10 @@ h1, h2{
     color: white;
 }
 
+button{
+    margin-bottom: 10px;
+}
+
 table{
     border-collapse: collapse;
 }

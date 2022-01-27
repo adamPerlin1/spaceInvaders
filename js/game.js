@@ -1,13 +1,13 @@
 'use strict';
 
 const BOARD_SIZE = 14;
-const ALIENS_ROW_LENGTH = 8
-const ALIENS_ROW_COUNT = 3
+const ALIENS_ROW_LENGTH = 8;
+const ALIENS_ROW_COUNT = 3;
 
-//type
+
 const SKY = 'SKY';
 const GROUND = 'GROUND';
-//game element
+
 const HERO = '👾';
 const ALIEN = '👽';
 const LASER = '🔥';
@@ -21,14 +21,19 @@ var gGame = {
 
 function initGame() {
     console.log('take cover!');
-
+    gGame.score = 0;
+    clearInterval(gIntervalAliens)
     gBoard = createBoard(BOARD_SIZE);
     createHero(gBoard);
     createAliens(gBoard);
-    renderBoard(gBoard)
+    gAliensTopRowIdx = 0;
+    gAliensBottomRowIdx = 2;
+    gAliensLeftColIdx = 3
+    gAliensRightColIdx = 10
+    moveAliens();
+    renderBoard(gBoard);
     document.querySelector('.modal').style.display = 'none';
-
-    // gIntervalAliens = setInterval(shiftBoardRight, 1000, gBoard)
+    document.querySelector('h2 span').innerText = 0;
 }
 
 function createBoard(size) {
@@ -36,7 +41,7 @@ function createBoard(size) {
     for (var i = 0; i < size; i++) {
         board[i] = [];
         for (var j = 0; j < size; j++) {
-            // put sky in regular cell
+            // put SKY in regular cell
             var cell = createCell()
             // place GROUND
             if (i === size - 1) {
@@ -45,7 +50,6 @@ function createBoard(size) {
             board[i][j] = cell
         }
     }
-    console.log(board)
     return board
 }
 
@@ -86,12 +90,24 @@ function getClassName(position) {
     return cellClass;
 }
 
-function CheckWin() {
-    if (gGame.aliensCount === 24) gameOver(true)
+function updateCell(pos, gameObject = null) {
+    gBoard[pos.i][pos.j].gameObject = gameObject;
+    var elCell = getElCell(pos);
+    elCell.innerHTML = gameObject || '';
 }
 
+function CheckWin() {
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[0].length; j++) {
+            if (gBoard[i][j].gameObject === ALIEN) return;
+        }
+    }
+    gameOver(true);
+}
+
+
 // function checkLoos(){
-//     if ()
+
 // }
 
 function gameOver(isWin) {
@@ -100,5 +116,6 @@ function gameOver(isWin) {
     document.querySelector('.modal h3').innerText = txt;
     document.querySelector('.modal').style.backgroundColor = color;
     document.querySelector('.modal').style.display = 'block';
-    
+    clearInterval(gIntervalAliens);
+    gIntervalAliens = null;
 }
