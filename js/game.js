@@ -1,9 +1,6 @@
 'use strict';
 
 const BOARD_SIZE = 14;
-const ALIENS_ROW_LENGTH = 8;
-const ALIENS_ROW_COUNT = 3;
-
 
 const SKY = 'SKY';
 const GROUND = 'GROUND';
@@ -11,8 +8,11 @@ const GROUND = 'GROUND';
 const HERO = '👾';
 const ALIEN = '👽';
 const LASER = '🔥';
+const SPACE_CANDY = '🧁';
 
 var gBoard;
+var gCandyInterval;
+
 var gGame = {
     isOn: false,
     aliensCount: 0,
@@ -20,37 +20,41 @@ var gGame = {
 };
 
 function initGame() {
-    console.log('take cover!');
+    console.log('Take cover!');
+    clearInterval(gCandyInterval);
+    clearInterval(gIntervalAliens);
     gGame.score = 0;
-    clearInterval(gIntervalAliens)
-    gBoard = createBoard(BOARD_SIZE);
-    createHero(gBoard);
-    createAliens(gBoard);
+    gGame.isOn = false;
+    gSuperModeCounter = 0;
     gAliensTopRowIdx = 0;
     gAliensBottomRowIdx = 2;
-    gAliensLeftColIdx = 3
-    gAliensRightColIdx = 10
-    moveAliens();
+    gAliensRightColIdx = 10;
+    gAliensLeftColIdx = 3;
+    gBoard = createBoard();
+    createHero(gBoard);
+    createAliens(gBoard);
     renderBoard(gBoard);
+    gCandyInterval = setInterval(addCandy, 10000);
+    gFuncOfDirection = shiftBoardRight;
     document.querySelector('.modal').style.display = 'none';
-    document.querySelector('h2 span').innerText = 0;
+    document.querySelector('h2 span').innerText = gGame.score;
 }
 
-function createBoard(size) {
+function createBoard() {
     var board = [];
-    for (var i = 0; i < size; i++) {
+    for (var i = 0; i < 14; i++) {
         board[i] = [];
-        for (var j = 0; j < size; j++) {
+        for (var j = 0; j < 14; j++) {
             // put SKY in regular cell
-            var cell = createCell()
+            var cell = createCell();
             // place GROUND
-            if (i === size - 1) {
+            if (i === 13) {
                 cell.type = GROUND;
             }
-            board[i][j] = cell
+            board[i][j] = cell;
         }
     }
-    return board
+    return board;
 }
 
 function renderBoard(board) {
@@ -59,35 +63,24 @@ function renderBoard(board) {
         strHTML += '<tr>\n';
         for (var j = 0; j < board[0].length; j++) {
             var currCell = board[i][j];
-            var cellClass = getClassName({ i: i, j: j });
 
-            if (currCell.type === GROUND) cellClass += ' ground';
-            else if (currCell.type === SKY) cellClass += ' sky';
+            var cellClass = (currCell.type === SKY) ? 'sky' : 'ground';
 
-            strHTML += `\t<td class="cell ${cellClass}">\n`;
+            strHTML += `\t<td class="${cellClass}" data-i="${i}" data-j="${j}">\n`;
 
             if (currCell.gameObject === HERO) {
                 strHTML += HERO;
             } else if (currCell.gameObject === ALIEN) {
                 strHTML += ALIEN;
+            } else if (currCell.gameObject === SPACE_CANDY){
+                strHTML += SPACE_CANDY;
             }
 
-            strHTML += `\t</td>\n`
+            strHTML += `\t</td>\n`;
         }
         strHTML += '</tr>\n';
     }
     document.querySelector('.board').innerHTML = strHTML;
-}
-
-
-function updateScore(diff) {
-    gGame.score += diff;
-    document.querySelector('h2 span').innerText = gGame.score;
-}
-
-function getClassName(position) {
-    var cellClass = 'cell-' + position.i + '-' + position.j;
-    return cellClass;
 }
 
 function updateCell(pos, gameObject = null) {
@@ -96,7 +89,36 @@ function updateCell(pos, gameObject = null) {
     elCell.innerHTML = gameObject || '';
 }
 
-function CheckWin() {
+function updateScore(diff) {
+    gGame.score += diff;
+    document.querySelector('h2 span').innerText = gGame.score;
+}
+
+function addCandy() {
+    var emptySpaces = getEmptySpaces();
+    var emptySpace = emptySpaces[getRandomIntInc(0, emptySpaces.length - 1)];
+    gBoard[emptySpace.i][emptySpace.j].gameObject = SPACE_CANDY;
+    updateCell(emptySpace, SPACE_CANDY);
+
+    setTimeout(function () {
+        if (gBoard[emptySpace.i][emptySpace.j].gameObject !== ALIEN) {
+            gBoard[emptySpace.i][emptySpace.j].gameObject = null;
+            updateCell(emptySpace);
+        }
+    }, 5000);
+}
+
+function getEmptySpaces() {
+    var emptySpaces = [];
+    for (var j = 0; j < gBoard[0].length; j++) {
+        if (!gBoard[0][j].gameObject) {
+            emptySpaces.push({ i: 0, j: j });
+        }
+    }
+    return emptySpaces;
+}
+
+function checkWin() {
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard[0].length; j++) {
             if (gBoard[i][j].gameObject === ALIEN) return;
@@ -105,11 +127,6 @@ function CheckWin() {
     gameOver(true);
 }
 
-
-// function checkLoos(){
-
-// }
-
 function gameOver(isWin) {
     var txt = isWin ? 'You Won!' : 'You Lose!';
     var color = isWin ? 'rgba(51, 173, 51, 0.829)' : 'red';
@@ -117,5 +134,5 @@ function gameOver(isWin) {
     document.querySelector('.modal').style.backgroundColor = color;
     document.querySelector('.modal').style.display = 'block';
     clearInterval(gIntervalAliens);
-    gIntervalAliens = null;
+    clearInterval(gCandyInterval);
 }

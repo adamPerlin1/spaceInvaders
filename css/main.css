@@ -1,6 +1,7 @@
 body{
     background-color: black;
     font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
 }
 
 h1, h2{
@@ -9,6 +10,15 @@ h1, h2{
 
 button{
     margin-bottom: 10px;
+    cursor: pointer;
+}
+
+tbody{
+    cursor: not-allowed;
+    position: absolute;
+    top: 61%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 table{
@@ -20,6 +30,13 @@ td{
     height: 2em;
     width: 2em;
     text-align: center;
+}
+
+.sky{
+    background-color: lightblue;
+}
+.ground{
+    background-color: brown;
 }
 
 .modal{
@@ -35,9 +52,10 @@ td{
     transform: translate(-50%, -50%);
 }
 
-.sky{
-    background-color: lightblue;
-}
-.ground{
-    background-color: brown;
+.instructions{
+    position: fixed;
+    left: 0;
+    top: 0;
+    background-color: rgb(61, 61, 199);
+    padding: 1em;
 }

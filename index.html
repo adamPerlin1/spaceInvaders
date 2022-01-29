@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/main.css">
-    <title>Space Invaders</title>
+    <title>space</title>
 </head>
-
-<body onkeydown="moveHero(event)" onload="initGame()">
-
+<body onkeydown="handleKey(event)" onload="initGame()">
     <h1>Space Invaders!</h1>
     <h2>Score: <span>0</span></h2>
 
@@ -27,10 +24,15 @@
         <button onclick="initGame()">Play Again</button>
     </div>
 
+    <div class="instructions">
+        space - for shooting <br>
+        N - for blow up neighbors <br>
+        X - for super mode
+    </div>
+
     <script src="js/utils.js"></script>
     <script src="js/hero.js"></script>
     <script src="js/alien.js"></script>
     <script src="js/game.js"></script>
 </body>
-
 </html>
